@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>M-Social</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f3f4f6;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      border-radius: 0 0 18px 18px;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      opacity: 0.9;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #2563eb;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .primary-btn {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .secondary-btn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .danger-btn {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .auth-buttons button {
+      flex: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .profile-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-info {
+      font-size: 17px;
+    }
+
+    .username {
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .post {
+      background: white;
+      border-radius: 15px;
+      padding: 16px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    }
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .post-user {
+      font-weight: bold;
+      color: #2563eb;
+      font-size: 17px;
+    }
+
+    .post-date {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .post-content {
+      font-size: 16px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-bottom: 15px;
+    }
+
+    .post-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+    }
+
+    .like-btn {
+      background: #f3f4f6;
+      color: #374151;
+      flex: 1;
+    }
+
+    .like-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .like-btn.liked {
+      background: #fee2e2;
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .delete-btn {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 10px 14px;
+    }
+
+    .delete-btn:hover {
+      background: #fecaca;
+    }
+
+    .empty {
+      text-align: center;
+      color: #6b7280;
+      padding: 25px;
+    }
+
+    .message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+    }
+
+    .success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+    }
+
+    .logout-btn {
+      background: white;
+      color: #2563eb;
+      border: 1px solid #2563eb;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 10px;
+      }
+
+      header {
+        border-radius: 0 0 14px 14px;
+      }
+
+      .profile-box {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .post-actions {
+        flex-wrap: wrap;
+      }
+
+      .like-btn {
+        width: 100%;
+        flex: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>🌐 M-Social</h1>
+    <p>منصتك الاجتماعية</p>
+  </header>
+
+  <div class="container">
+
+    <!-- تسجيل الدخول -->
+    <div id="authSection" class="card">
+
+      <h2>تسجيل الدخول</h2>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="البريد الإلكتروني"
+        autocomplete="email"
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="كلمة المرور"
+        autocomplete="current-password"
+      >
+
+      <div class="auth-buttons">
+        <button class="primary-btn" onclick="login()">
+          تسجيل الدخول
+        </button>
+
+        <button class="secondary-btn" onclick="register()">
+          إنشاء حساب
+        </button>
+      </div>
+
+      <div id="authMessage" class="message"></div>
+
+    </div>
+
+
+    <!-- التطبيق -->
+    <div id="appSection" class="hidden">
+
+      <!-- الملف الشخصي -->
+      <div class="card">
+
+        <div class="profile-box">
+
+          <div class="profile-info">
+            مرحباً 👋
+            <span id="profileUsername" class="username"></span>
+          </div>
+
+          <button class="logout-btn" onclick="logout()">
+            تسجيل الخروج
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- إنشاء منشور -->
+      <div class="card">
+
+        <h2>📝 منشور جديد</h2>
+
+        <textarea
+          id="postContent"
+          placeholder="بماذا تفكر؟"
+          maxlength="5000"
+        ></textarea>
+
+        <button class="primary-btn" onclick="createPost()">
+          نشر المنشور
+        </button>
+
+        <div id="postMessage" class="message"></div>
+
+      </div>
+
+
+      <!-- المنشورات -->
+      <div class="card">
+
+        <h2>📰 المنشورات</h2>
+
+        <div id="postsList">
+          <div class="loading">
+            جاري تحميل المنشورات...
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+  /* =========================================================
+     SUPABASE
+  ========================================================= */
+
+  const SUPABASE_URL =
+    "https://ycjqetdvjvpzlessmkcf.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_GdHgqXGs8lY7JNWebaXjqA_YUdhTMs5";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  /* =========================================================
+     VARIABLES
+  ========================================================= */
+
+  let currentUser = null;
+
+
+  /* =========================================================
+     MESSAGES
+  ========================================================= */
+
+  function showMessage(elementId, text, type) {
+
+    const element = document.getElementById(elementId);
+
+    element.textContent = text;
+
+    element.className = "message " + type;
+
+  }
+
+
+  function clearMessage(elementId) {
+
+    const element = document.getElementById(elementId);
+
+    element.textContent = "";
+
+    element.className = "message";
+
+  }
+
+
+  /* =========================================================
+     REGISTER
+  ========================================================= */
+
+  async function register() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    if (!email || !password) {
+
+      showMessage(
+        "authMessage",
+        "اكتب البريد الإلكتروني وكلمة المرور",
+        "error"
+      );
+
+      return;
+    }
+
+    if (password.length < 6) {
+
+      showMessage(
+        "authMessage",
+        "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+        "error"
+      );
+
+      return;
+    }
+
+    clearMessage("authMessage");
+
+    const {
+      data,
+      error
+    } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password
+    });
+
+
+    if (error) {
+
+      showMessage(
+        "authMessage",
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    if (data.user) {
+
+      showMessage(
+        "authMessage",
+        "تم إنشاء الحساب بنجاح ✅",
+        "success"
+      );
+
+      if (data.session) {
+
+        currentUser = data.user;
+
+        await createProfile();
+
+        showApp();
+
+      }
+
+    }
+
+  }
+
+
+  /* =========================================================
+     LOGIN
+  ========================================================= */
+
+  async function login() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+
+    if (!email || !password) {
+
+      showMessage(
+        "authMessage",
+        "اكتب البريد الإلكتروني وكلمة المرور",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    clearMessage("authMessage");
+
+
+    const {
+      data,
+      error
+    } = await supabaseClient.auth.signInWithPassword({
+
+      email: email,
+
+      password: password
+
+    });
+
+
+    if (error) {
+
+      showMessage(
+        "authMessage",
+        error.message,
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    currentUser = data.user;
+
+    await createProfile();
+
+    showApp();
+
+  }
+
+
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+
+    document
+      .getElementById("appSection")
+      .classList.add("hidden");
+
+    document
+      .getElementById("authSection")
+      .classList.remove("hidden");
+
+  }
+
+
+  /* =========================================================
+     PROFILE
+  ========================================================= */
+
+  async function createProfile() {
+
+    if (!currentUser) return;
+
+
+    const username =
+      currentUser.email
+        ? currentUser.email.split("@")[0]
+        : "مستخدم";
+
+
+    const {
+      error
+    } = await supabaseClient
+      .from("profiles")
+      .upsert({
+
+        id: currentUser.id,
+
+        username: username
+
+      });
+
+
+    if (error) {
+
+      console.error(
+        "Profile error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  async function loadProfile() {
+
+    if (!currentUser) return;
+
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("profiles")
+      .select("username")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+
+    if (error) {
+
+      console.error(
+        "Load profile error:",
+        error
+      );
+
+      return;
+
+    }
+
+
+    if (data) {
+
+      document.getElementById(
+        "profileUsername"
+      ).textContent = data.username;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     SHOW APP
+  ========================================================= */
+
+  async function showApp() {
+
+    document
+      .getElementById("authSection")
+      .classList.add("hidden");
+
+
+    document
+      .getElementById("appSection")
+      .classList.remove("hidden");
+
+
+    await loadProfile();
+
+    await loadPosts();
+
+  }
+
+
+  /* =========================================================
+     CREATE POST
+  ========================================================= */
+
+  async function createPost() {
+
+    if (!currentUser) {
+
+      showMessage(
+        "postMessage",
+        "يجب تسجيل الدخول أولاً",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const textarea =
+      document.getElementById("postContent");
+
+
+    const content =
+      textarea.value.trim();
+
+
+    if (!content) {
+
+      showMessage(
+        "postMessage",
+        "اكتب شيئاً قبل النشر",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    clearMessage("postMessage");
+
+
+    const {
+      error
+    } = await supabaseClient
+      .from("posts")
+      .insert({
+
+        user_id: currentUser.id,
+
+        content: content
+
+      });
+
+
+    if (error) {
+
+      console.error(error);
+
+      showMessage(
+        "postMessage",
+        "حدث خطأ أثناء نشر المنشور: " + error.message,
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    textarea.value = "";
+
+
+    showMessage(
+      "postMessage",
+      "تم نشر المنشور بنجاح ✅",
+      "success"
+    );
+
+
+    await loadPosts();
+
+  }
+
+
+  /* =========================================================
+     LOAD POSTS + LIKES
+  ========================================================= */
+
+  async function loadPosts() {
+
+    const postsList =
+      document.getElementById("postsList");
+
+
+    postsList.innerHTML =
+      '<div class="loading">جاري تحميل المنشورات...</div>';
+
+
+    const {
+      data: posts,
+      error: postsError
+    } = await supabaseClient
+      .from("posts")
+      .select("*")
+      .order("created_at", {
+        ascending: false
+      });
+
+
+    if (postsError) {
+
+      console.error(postsError);
+
+      postsList.innerHTML =
+        '<div class="empty">حدث خطأ أثناء تحميل المنشورات</div>';
+
+      return;
+
+    }
+
+
+    /*
+      تحميل كل الإعجابات
+    */
+
+    const {
+      data: likes,
+      error: likesError
+    } = await supabaseClient
+      .from("post_likes")
+      .select("post_id,user_id");
+
+
+    if (likesError) {
+
+      console.error(likesError);
+
+      postsList.innerHTML =
+        '<div class="empty">حدث خطأ أثناء تحميل الإعجابات</div>';
+
+      return;
+
+    }
+
+
+    /*
+      حساب عدد الإعجابات لكل منشور
+    */
+
+    const likeCounts = {};
+
+    const userLikedPosts = new Set();
+
+
+    (likes || []).forEach(function(like) {
+
+      if (!likeCounts[like.post_id]) {
+
+        likeCounts[like.post_id] = 0;
+
+      }
+
+      likeCounts[like.post_id]++;
+
+
+      if (
+        currentUser &&
+        like.user_id === currentUser.id
+      ) {
+
+        userLikedPosts.add(
+          like.post_id
+        );
+
+      }
+
+    });
+
+
+    if (!posts || posts.length === 0) {
+
+      postsList.innerHTML =
+        '<div class="empty">لا توجد منشورات حتى الآن 📝</div>';
+
+      return;
+
+    }
+
+
+    postsList.innerHTML = "";
+
+
+    for (const post of posts) {
+
+      const likeCount =
+        likeCounts[post.id] || 0;
+
+
+      const liked =
+        userLikedPosts.has(post.id);
+
+
+      const postElement =
+        await createPostElement(
+          post,
+          likeCount,
+          liked
+        );
+
+
+      postsList.appendChild(
+        postElement
+      );
+
+    }
+
+  }
+
+
+  /* =========================================================
+     CREATE POST ELEMENT
+  ========================================================= */
+
+  async function createPostElement(
+    post,
+    likeCount,
+    liked
+  ) {
+
+    const postDiv =
+      document.createElement("div");
+
+
+    postDiv.className = "post";
+
+
+    /*
+      الحصول على اسم صاحب المنشور
+    */
+
+    let username = "مستخدم";
+
+
+    const {
+      data: profile
+    } = await supabaseClient
+      .from("profiles")
+      .select("username")
+      .eq("id", post.user_id)
+      .maybeSingle();
+
+
+    if (profile && profile.username) {
+
+      username = profile.username;
+
+    }
+
+
+    /*
+      رأس المنشور
+    */
+
+    const header =
+      document.createElement("div");
+
+    header.className = "post-header";
+
+
+    const userNameElement =
+      document.createElement("div");
+
+    userNameElement.className =
+      "post-user";
+
+    userNameElement.textContent =
+      "👤 " + username;
+
+
+    const dateElement =
+      document.createElement("div");
+
+    dateElement.className =
+      "post-date";
+
+
+    const date =
+      new Date(post.created_at);
+
+
+    dateElement.textContent =
+      date.toLocaleString("ar-EG");
+
+
+    header.appendChild(
+      userNameElement
+    );
+
+    header.appendChild(
+      dateElement
+    );
+
+
+    /*
+      محتوى المنشور
+    */
+
+    const content =
+      document.createElement("div");
+
+    content.className =
+      "post-content";
+
+    content.textContent =
+      post.content;
+
+
+    /*
+      أزرار المنشور
+    */
+
+    const actions =
+      document.createElement("div");
+
+    actions.className =
+      "post-actions";
+
+
+    /*
+      زر الإعجاب
+    */
+
+    const likeButton =
+      document.createElement("button");
+
+
+    likeButton.className =
+      "like-btn" +
+      (liked ? " liked" : "");
+
+
+    likeButton.textContent =
+      liked
+        ? "❤️ إلغاء الإعجاب (" + likeCount + ")"
+        : "🤍 إعجاب (" + likeCount + ")";
+
+
+    likeButton.onclick =
+      function() {
+
+        toggleLike(post.id);
+
+      };
+
+
+    actions.appendChild(
+      likeButton
+    );
+
+
+    /*
+      زر الحذف لصاحب المنشور فقط
+    */
+
+    if (
+      currentUser &&
+      currentUser.id === post.user_id
+    ) {
+
+      const deleteButton =
+        document.createElement("button");
+
+
+      deleteButton.className =
+        "delete-btn";
+
+
+      deleteButton.textContent =
+        "🗑️ حذف";
+
+
+      deleteButton.onclick =
+        function() {
+
+          deletePost(post.id);
+
+        };
+
+
+      actions.appendChild(
+        deleteButton
+      );
+
+    }
+
+
+    /*
+      تركيب المنشور
+    */
+
+    postDiv.appendChild(
+      header
+    );
+
+    postDiv.appendChild(
+      content
+    );
+
+    postDiv.appendChild(
+      actions
+    );
+
+
+    return postDiv;
+
+  }
+
+
+  /* =========================================================
+     LIKE / UNLIKE
+  ========================================================= */
+
+  async function toggleLike(postId) {
+
+    if (!currentUser) {
+
+      alert("يجب تسجيل الدخول أولاً");
+
+      return;
+
+    }
+
+
+    /*
+      معرفة هل المستخدم عامل إعجاب بالفعل
+    */
+
+    const {
+      data: existingLike,
+      error: findError
+    } = await supabaseClient
+      .from("post_likes")
+      .select("id")
+      .eq("post_id", postId)
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+
+    if (findError) {
+
+      console.error(findError);
+
+      alert(
+        "حدث خطأ أثناء التحقق من الإعجاب"
+      );
+
+      return;
+
+    }
+
+
+    /*
+      إذا كان عامل إعجاب -> إلغاء
+    */
+
+    if (existingLike) {
+
+      const {
+        error
+      } = await supabaseClient
+        .from("post_likes")
+        .delete()
+        .eq("id", existingLike.id);
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "حدث خطأ أثناء إلغاء الإعجاب"
+        );
+
+        return;
+
+      }
+
+    }
+
+    /*
+      إذا لم يكن عامل إعجاب -> إضافة
+    */
+
+    else {
+
+      const {
+        error
+      } = await supabaseClient
+        .from("post_likes")
+        .insert({
+
+          post_id: postId,
+
+          user_id: currentUser.id
+
+        });
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "حدث خطأ أثناء إضافة الإعجاب"
+        );
+
+        return;
+
+      }
+
+    }
+
+
+    /*
+      تحديث المنشورات والعداد
+    */
+
+    await loadPosts();
+
+  }
+
+
+  /* =========================================================
+     DELETE POST
+  ========================================================= */
+
+  async function deletePost(postId) {
+
+    if (!currentUser) return;
+
+
+    const confirmDelete =
+      confirm(
+        "هل أنت متأكد من حذف المنشور؟"
+      );
+
+
+    if (!confirmDelete) return;
+
+
+    const {
+      error
+    } = await supabaseClient
+      .from("posts")
+      .delete()
+      .eq("id", postId)
+      .eq("user_id", currentUser.id);
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "حدث خطأ أثناء حذف المنشور: " +
+        error.message
+      );
+
+      return;
+
+    }
+
+
+    await loadPosts();
+
+  }
+
+
+  /* =========================================================
+     CHECK SESSION
+  ========================================================= */
+
+  async function checkSession() {
+
+    const {
+      data
+    } = await supabaseClient.auth.getSession();
+
+
+    if (
+      data &&
+      data.session &&
+      data.session.user
+    ) {
+
+      currentUser =
+        data.session.user;
+
+
+      await createProfile();
+
+      await showApp();
+
+    }
+
+    else {
+
+      document
+        .getElementById("authSection")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("appSection")
+        .classList.add("hidden");
+
+    }
+
+  }
+
+
+  /* =========================================================
+     AUTH STATE
+  ========================================================= */
+
+  supabaseClient.auth.onAuthStateChange(
+    async function(event, session) {
+
+      if (
+        session &&
+        session.user
+      ) {
+
+        currentUser =
+          session.user;
+
+        await createProfile();
+
+        await showApp();
+
+      }
+
+      else {
+
+        currentUser = null;
+
+        document
+          .getElementById("authSection")
+          .classList.remove("hidden");
+
+        document
+          .getElementById("appSection")
+          .classList.add("hidden");
+
+      }
+
+    }
+  );
+
+
+  /* =========================================================
+     START
+  ========================================================= */
+
+  checkSession();
+
+</script>
+
+</body>
+  </html>
