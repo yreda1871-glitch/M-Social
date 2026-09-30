@@ -1,0 +1,3056 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>M-Social 2.0</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+ font-family:Arial,"Tahoma",sans-serif
+}
+
+:root{
+ --bg:#f5f7fb;
+ --card:#fff;
+ --text:#111827;
+ --muted:#64748b;
+ --line:#e5e7eb;
+ --primary:#635bff;
+ --primary2:#8b5cf6;
+ --soft:#eef2ff;
+ --danger:#ef4444;
+ --success:#10b981;
+ --shadow:0 8px 30px rgba(15,23,42,.07)
+}
+
+body{
+ background:
+ radial-gradient(circle at 10% 0%,#e9e7ff 0,transparent 25%),
+ radial-gradient(circle at 100% 10%,#dff7ff 0,transparent 25%),
+ var(--bg);
+ color:var(--text);
+ min-height:100vh;
+ transition:.25s
+}
+
+body.dark{
+ --bg:#070b14;
+ --card:#111827;
+ --text:#f8fafc;
+ --muted:#94a3b8;
+ --line:#263244;
+ --soft:#1e1b4b;
+ --shadow:0 8px 30px rgba(0,0,0,.25);
+ background:
+ radial-gradient(circle at 0 0,#17113a 0,transparent 28%),
+ radial-gradient(circle at 100% 0,#09283b 0,transparent 25%),
+ #070b14
+}
+
+button,input,textarea{font:inherit}
+
+button{
+ border:0;
+ cursor:pointer
+}
+
+.hidden{display:none!important}
+
+button:active{
+ transform:scale(.96)
+}
+
+/* ================= HEADER ================= */
+
+header{
+ position:sticky;
+ top:0;
+ z-index:100;
+ height:68px;
+ background:rgba(255,255,255,.82);
+ backdrop-filter:blur(18px);
+ border-bottom:1px solid var(--line)
+}
+
+.dark header{
+ background:rgba(7,11,20,.82)
+}
+
+.header-inner{
+ max-width:1180px;
+ height:100%;
+ margin:auto;
+ padding:0 18px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px
+}
+
+.logo{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ font-size:22px;
+ font-weight:900;
+ letter-spacing:-.5px
+}
+
+.logo-icon{
+ width:38px;
+ height:38px;
+ border-radius:13px;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ box-shadow:0 7px 18px #635bff44
+}
+
+.header-center{
+ flex:1;
+ max-width:430px
+}
+
+.header-search{
+ width:100%;
+ background:var(--bg);
+ border:1px solid var(--line);
+ border-radius:15px;
+ padding:11px 15px;
+ color:var(--text);
+ outline:none
+}
+
+.header-search:focus{
+ border-color:var(--primary)
+}
+
+.header-actions{
+ display:flex;
+ align-items:center;
+ gap:8px
+}
+
+.icon-btn{
+ width:42px;
+ height:42px;
+ border-radius:13px;
+ background:var(--bg);
+ color:var(--text);
+ border:1px solid var(--line);
+ font-size:18px;
+ position:relative
+}
+
+.icon-btn:hover{
+ background:var(--soft)
+}
+
+.user-mini{
+ width:42px;
+ height:42px;
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ font-weight:bold
+}
+
+/* ================= LAYOUT ================= */
+
+.page{
+ padding-bottom:90px
+}
+
+.layout{
+ max-width:1180px;
+ margin:auto;
+ padding:22px 16px;
+ display:grid;
+ grid-template-columns:250px minmax(0,650px) 250px;
+ gap:20px;
+ direction:ltr
+}
+
+.layout>*{
+ direction:rtl
+}
+
+.center{
+ min-width:0
+}
+
+.side-card{
+ background:var(--card);
+ border:1px solid var(--line);
+ border-radius:22px;
+ padding:15px;
+ box-shadow:var(--shadow);
+ margin-bottom:16px
+}
+
+.side-title{
+ font-weight:800;
+ margin-bottom:14px
+}
+
+/* ================= AUTH ================= */
+
+.auth-wrap{
+ min-height:calc(100vh - 68px);
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ padding:20px
+}
+
+.auth-box{
+ width:100%;
+ max-width:430px;
+ background:var(--card);
+ border:1px solid var(--line);
+ border-radius:28px;
+ padding:30px;
+ box-shadow:0 20px 70px rgba(15,23,42,.12)
+}
+
+.auth-logo{
+ width:72px;
+ height:72px;
+ margin:0 auto 18px;
+ border-radius:24px;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ font-size:35px;
+ box-shadow:0 15px 35px #635bff44
+}
+
+.auth-box h1{
+ text-align:center;
+ margin-bottom:7px
+}
+
+.auth-sub{
+ text-align:center;
+ color:var(--muted);
+ margin-bottom:25px
+}
+
+.input{
+ width:100%;
+ padding:14px 15px;
+ border-radius:14px;
+ border:1px solid var(--line);
+ background:var(--bg);
+ color:var(--text);
+ outline:none;
+ margin-bottom:11px
+}
+
+.input:focus{
+ border-color:var(--primary);
+ box-shadow:0 0 0 3px #635bff18
+}
+
+.btn{
+ padding:13px 16px;
+ border-radius:14px;
+ font-weight:bold;
+ transition:.15s
+}
+
+.btn-primary{
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ box-shadow:0 8px 20px #635bff30
+}
+
+.btn-secondary{
+ background:var(--soft);
+ color:var(--primary)
+}
+
+.auth-buttons{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:9px
+}
+
+/* ================= PROFILE CARD ================= */
+
+.profile-card{
+ overflow:hidden;
+ padding:0
+}
+
+.cover{
+ height:105px;
+ background:
+ linear-gradient(135deg,#4f46e5,#7c3aed,#06b6d4);
+ position:relative
+}
+
+.cover:after{
+ content:"";
+ position:absolute;
+ inset:0;
+ background:linear-gradient(45deg,transparent,#ffffff22,transparent)
+}
+
+.profile-body{
+ padding:0 17px 17px
+}
+
+.profile-avatar{
+ width:72px;
+ height:72px;
+ margin-top:-36px;
+ border:5px solid var(--card);
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ font-size:27px;
+ font-weight:bold;
+ position:relative;
+ z-index:2
+}
+
+.profile-name{
+ font-size:18px;
+ font-weight:900;
+ margin-top:9px
+}
+
+.profile-handle{
+ color:var(--muted);
+ font-size:13px;
+ margin-top:3px
+}
+
+.profile-bio{
+ color:var(--muted);
+ line-height:1.6;
+ margin-top:10px;
+ font-size:14px
+}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ margin-top:17px;
+ padding-top:14px;
+ border-top:1px solid var(--line);
+ text-align:center
+}
+
+.stats b{
+ display:block;
+ font-size:17px
+}
+
+.stats span{
+ color:var(--muted);
+ font-size:11px
+}
+
+/* ================= NAV SIDE ================= */
+
+.menu{
+ display:flex;
+ flex-direction:column;
+ gap:5px
+}
+
+.menu button{
+ background:transparent;
+ color:var(--muted);
+ padding:13px;
+ border-radius:14px;
+ text-align:right;
+ font-weight:bold;
+ font-size:15px
+}
+
+.menu button:hover,
+.menu button.active{
+ background:var(--soft);
+ color:var(--primary)
+}
+
+/* ================= COMPOSER ================= */
+
+.composer{
+ background:var(--card);
+ border:1px solid var(--line);
+ border-radius:22px;
+ padding:17px;
+ box-shadow:var(--shadow);
+ margin-bottom:16px
+}
+
+.composer-top{
+ display:flex;
+ gap:11px;
+ align-items:center;
+ margin-bottom:13px
+}
+
+.composer-avatar{
+ width:44px;
+ height:44px;
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ font-weight:bold;
+ flex-shrink:0
+}
+
+.composer-title{
+ font-weight:bold
+}
+
+.composer-sub{
+ color:var(--muted);
+ font-size:12px;
+ margin-top:3px
+}
+
+.composer textarea{
+ min-height:80px;
+ border:0;
+ background:var(--bg);
+ margin:0 0 12px;
+ border-radius:17px;
+ padding:14px;
+ resize:none
+}
+
+.composer-bottom{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px
+}
+
+.media-placeholder{
+ color:var(--muted);
+ font-size:13px
+}
+
+.publish{
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ padding:11px 20px;
+ border-radius:13px;
+ font-weight:bold
+}
+
+/* ================= POSTS ================= */
+
+.post{
+ background:var(--card);
+ border:1px solid var(--line);
+ border-radius:22px;
+ padding:17px;
+ box-shadow:var(--shadow);
+ margin-bottom:16px;
+ animation:fadeIn .25s ease
+}
+
+@keyframes fadeIn{
+ from{opacity:0;transform:translateY(5px)}
+ to{opacity:1;transform:none}
+}
+
+.post-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-start;
+ gap:10px;
+ margin-bottom:13px
+}
+
+.post-user-box{
+ display:flex;
+ gap:10px;
+ align-items:center
+}
+
+.post-avatar{
+ width:45px;
+ height:45px;
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ font-weight:bold;
+ flex-shrink:0
+}
+
+.post-name{
+ font-weight:900
+}
+
+.post-handle{
+ color:var(--muted);
+ font-size:12px;
+ margin-top:3px
+}
+
+.post-date{
+ color:var(--muted);
+ font-size:11px
+}
+
+.post-content{
+ line-height:1.9;
+ white-space:pre-wrap;
+ word-break:break-word;
+ font-size:15px;
+ margin:5px 0 15px
+}
+
+.post-actions{
+ display:grid;
+ grid-template-columns:1fr 1fr 1fr;
+ gap:7px;
+ border-top:1px solid var(--line);
+ padding-top:11px
+}
+
+.action{
+ background:var(--bg);
+ color:var(--muted);
+ padding:10px;
+ border-radius:12px;
+ font-weight:bold
+}
+
+.action:hover{
+ background:var(--soft);
+ color:var(--primary)
+}
+
+.liked{
+ background:#fff1f2!important;
+ color:#ef4444!important
+}
+
+.dark .liked{
+ background:#451a1f!important
+}
+
+.delete{
+ color:#ef4444!important
+}
+
+/* ================= COMMENTS ================= */
+
+.comment-box{
+ margin-top:12px;
+ padding-top:12px;
+ border-top:1px solid var(--line)
+}
+
+.comment{
+ background:var(--bg);
+ padding:10px 12px;
+ border-radius:13px;
+ margin-bottom:7px
+}
+
+.comment-user{
+ font-weight:bold;
+ font-size:13px
+}
+
+.comment-text{
+ line-height:1.5;
+ margin-top:3px
+}
+
+.comment-input{
+ display:flex;
+ gap:7px;
+ margin-top:9px
+}
+
+.comment-input input{
+ margin:0
+}
+
+.comment-input button{
+ background:var(--primary);
+ color:white;
+ border-radius:12px;
+ padding:0 15px
+}
+
+/* ================= SEARCH ================= */
+
+.search-box{
+ background:var(--card);
+ border:1px solid var(--line);
+ border-radius:22px;
+ padding:18px;
+ box-shadow:var(--shadow)
+}
+
+.search-result{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ padding:13px 0;
+ border-bottom:1px solid var(--line)
+}
+
+.search-result:last-child{
+ border-bottom:0
+}
+
+.user-info{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ min-width:0
+}
+
+.small-avatar{
+ width:44px;
+ height:44px;
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ font-weight:bold;
+ flex-shrink:0
+}
+
+.user-text{
+ min-width:0
+}
+
+.user-text b{
+ display:block;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis
+}
+
+.user-text small{
+ color:var(--muted)
+}
+
+.follow-btn{
+ background:var(--primary);
+ color:white;
+ padding:9px 13px;
+ border-radius:11px;
+ font-weight:bold;
+ white-space:nowrap
+}
+
+.following{
+ background:var(--soft);
+ color:var(--primary)
+}
+
+/* ================= NOTIFICATIONS ================= */
+
+.notification{
+ display:flex;
+ gap:12px;
+ padding:14px;
+ border:1px solid var(--line);
+ border-radius:16px;
+ margin-bottom:9px;
+ background:var(--card)
+}
+
+.notification-icon{
+ width:42px;
+ height:42px;
+ border-radius:13px;
+ background:var(--soft);
+ display:grid;
+ place-items:center;
+ flex-shrink:0
+}
+
+.notification small{
+ color:var(--muted)
+}
+
+/* ================= PROFILE PAGE ================= */
+
+.profile-page-card{
+ background:var(--card);
+ border:1px solid var(--line);
+ border-radius:22px;
+ box-shadow:var(--shadow);
+ overflow:hidden;
+ margin-bottom:16px
+}
+
+.profile-large-cover{
+ height:150px;
+ background:linear-gradient(135deg,#4f46e5,#7c3aed,#06b6d4)
+}
+
+.profile-large-body{
+ padding:0 20px 22px
+}
+
+.large-avatar{
+ width:95px;
+ height:95px;
+ margin-top:-47px;
+ border:6px solid var(--card);
+ border-radius:50%;
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ display:grid;
+ place-items:center;
+ font-size:35px;
+ font-weight:bold;
+ position:relative
+}
+
+.profile-actions{
+ display:flex;
+ gap:8px;
+ margin-top:13px
+}
+
+.profile-actions button{
+ flex:1
+}
+
+/* ================= CHAT ================= */
+
+.modal{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.65);
+ backdrop-filter:blur(5px);
+ z-index:300;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:15px
+}
+
+.modal-box{
+ width:100%;
+ max-width:650px;
+ max-height:92vh;
+ overflow:auto;
+ background:var(--card);
+ color:var(--text);
+ border:1px solid var(--line);
+ border-radius:25px;
+ box-shadow:0 25px 80px #0008;
+ padding:18px
+}
+
+.modal-head{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ margin-bottom:15px
+}
+
+.close{
+ width:38px;
+ height:38px;
+ border-radius:50%;
+ background:var(--bg);
+ color:var(--text);
+ font-size:22px
+}
+
+.chat{
+ height:390px;
+ overflow:auto;
+ padding:13px;
+ background:var(--bg);
+ border-radius:18px;
+ margin-top:13px
+}
+
+.bubble{
+ max-width:78%;
+ padding:11px 14px;
+ border-radius:17px;
+ margin-bottom:9px;
+ line-height:1.5
+}
+
+.mine{
+ background:linear-gradient(135deg,var(--primary),var(--primary2));
+ color:white;
+ margin-left:auto;
+ border-bottom-left-radius:5px
+}
+
+.theirs{
+ background:var(--card);
+ border:1px solid var(--line);
+ margin-right:auto;
+ border-bottom-right-radius:5px
+}
+
+.chat-send{
+ display:flex;
+ gap:8px;
+ margin-top:10px
+}
+
+.chat-send input{
+ margin:0
+}
+
+.chat-send button{
+ background:var(--primary);
+ color:white;
+ padding:0 18px;
+ border-radius:13px
+}
+
+/* ================= BOTTOM NAV ================= */
+
+.bottom-nav{
+ display:none;
+ position:fixed;
+ left:0;
+ right:0;
+ bottom:0;
+ z-index:150;
+ height:70px;
+ background:rgba(255,255,255,.92);
+ backdrop-filter:blur(18px);
+ border-top:1px solid var(--line);
+ padding-bottom:env(safe-area-inset-bottom)
+}
+
+.dark .bottom-nav{
+ background:rgba(17,24,39,.94)
+}
+
+.bottom-inner{
+ max-width:650px;
+ margin:auto;
+ height:100%;
+ display:grid;
+ grid-template-columns:repeat(5,1fr)
+}
+
+.bottom-nav button{
+ background:transparent;
+ color:var(--muted);
+ font-size:11px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:3px
+}
+
+.bottom-nav button span{
+ font-size:21px
+}
+
+.bottom-nav button.active{
+ color:var(--primary);
+ font-weight:bold
+}
+
+/* ================= UTILITIES ================= */
+
+.section-title{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:14px
+}
+
+.section-title h2{
+ font-size:19px
+}
+
+.empty{
+ text-align:center;
+ color:var(--muted);
+ padding:35px 15px
+}
+
+.loading{
+ text-align:center;
+ color:var(--muted);
+ padding:30px
+}
+
+.message{
+ padding:11px 13px;
+ border-radius:12px;
+ text-align:center;
+ margin-top:10px;
+ font-size:14px
+}
+
+.success{
+ background:#dcfce7;
+ color:#166534
+}
+
+.error{
+ background:#fee2e2;
+ color:#991b1b
+}
+
+.dark .success{
+ background:#052e1b;
+ color:#86efac
+}
+
+.dark .error{
+ background:#450a0a;
+ color:#fca5a5
+}
+
+.toast{
+ position:fixed;
+ left:50%;
+ bottom:85px;
+ transform:translateX(-50%) translateY(20px);
+ background:#111827;
+ color:white;
+ padding:12px 18px;
+ border-radius:14px;
+ z-index:500;
+ opacity:0;
+ pointer-events:none;
+ transition:.25s;
+ box-shadow:0 10px 30px #0004;
+ white-space:nowrap
+}
+
+.toast.show{
+ opacity:1;
+ transform:translateX(-50%) translateY(0)
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:950px){
+ .layout{
+  grid-template-columns:minmax(0,680px);
+  justify-content:center
+ }
+
+ .left-side,
+ .right-side{
+  display:none
+ }
+
+ .bottom-nav{
+  display:block
+ }
+
+ .header-center{
+  max-width:300px
+ }
+}
+
+@media(max-width:650px){
+ header{
+  height:62px
+ }
+
+ .header-inner{
+  padding:0 11px
+ }
+
+ .logo{
+  font-size:19px
+ }
+
+ .logo-icon{
+  width:34px;
+  height:34px
+ }
+
+ .header-center{
+  display:none
+ }
+
+ .header-actions{
+  margin-right:auto
+ }
+
+ .layout{
+  padding:10px 8px 20px
+ }
+
+ .post,
+ .composer,
+ .search-box,
+ .side-card{
+  border-radius:18px
+ }
+
+ .post{
+  padding:14px
+ }
+
+ .post-actions{
+  grid-template-columns:1fr 1fr 1fr
+ }
+
+ .action{
+  font-size:12px;
+  padding:10px 5px
+ }
+
+ .auth-box{
+  padding:23px 17px;
+  border-radius:23px
+ }
+
+ .auth-buttons{
+  grid-template-columns:1fr
+ }
+
+ .profile-large-cover{
+  height:120px
+ }
+
+ .large-avatar{
+  width:82px;
+  height:82px;
+  margin-top:-41px
+ }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header>
+ <div class="header-inner">
+
+  <div class="logo">
+   <div class="logo-icon">M</div>
+   <span>M-Social</span>
+  </div>
+
+  <div class="header-center">
+   <input
+    class="header-search"
+    placeholder="🔎 ابحث في M-Social..."
+    onclick="showPage('search')"
+   >
+  </div>
+
+  <div class="header-actions">
+
+   <button class="icon-btn" onclick="toggleDark()" id="darkBtn">
+    🌙
+   </button>
+
+   <button class="icon-btn" onclick="showPage('notifications')">
+    🔔
+   </button>
+
+   <button class="user-mini" id="headerAvatar">
+    M
+   </button>
+
+  </div>
+
+ </div>
+</header>
+
+<!-- ================= AUTH ================= -->
+
+<div id="authSection">
+
+ <div class="auth-wrap">
+
+  <div class="auth-box">
+
+   <div class="auth-logo">M</div>
+
+   <h1>مرحباً بك في M-Social</h1>
+
+   <div class="auth-sub">
+    تواصل، شارك، وتابع الأشخاص الذين تهتم بهم.
+   </div>
+
+   <input
+    id="email"
+    class="input"
+    type="email"
+    placeholder="البريد الإلكتروني"
+   >
+
+   <input
+    id="password"
+    class="input"
+    type="password"
+    placeholder="كلمة المرور"
+   >
+
+   <div class="auth-buttons">
+
+    <button
+     class="btn btn-primary"
+     onclick="login()"
+    >
+     تسجيل الدخول
+    </button>
+
+    <button
+     class="btn btn-secondary"
+     onclick="register()"
+    >
+     إنشاء حساب
+    </button>
+
+   </div>
+
+   <div id="authMessage"></div>
+
+  </div>
+
+ </div>
+
+</div>
+
+<!-- ================= APP ================= -->
+
+<div id="appSection" class="hidden page">
+
+ <div class="layout">
+
+  <!-- ================= LEFT ================= -->
+
+  <aside class="left-side">
+
+   <div class="side-card profile-card">
+
+    <div class="cover"></div>
+
+    <div class="profile-body">
+
+     <div class="profile-avatar" id="mainAvatar">M</div>
+
+     <div class="profile-name" id="profileName">
+      مستخدم
+     </div>
+
+     <div class="profile-handle" id="profileEmail"></div>
+
+     <div class="profile-bio">
+      أهلاً بك في M-Social 👋
+     </div>
+
+     <div class="stats">
+
+      <div>
+       <b id="sidePosts">0</b>
+       <span>منشورات</span>
+      </div>
+
+      <div>
+       <b id="sideFollowers">0</b>
+       <span>متابعون</span>
+      </div>
+
+      <div>
+       <b id="sideFollowing">0</b>
+       <span>أتابع</span>
+      </div>
+
+     </div>
+
+    </div>
+
+   </div>
+
+   <div class="side-card">
+
+    <div class="menu">
+
+     <button class="active" onclick="showPage('home',this)">
+      🏠 الرئيسية
+     </button>
+
+     <button onclick="showPage('search',this)">
+      🔎 استكشاف
+     </button>
+
+     <button onclick="showMessages()">
+      💬 الرسائل
+     </button>
+
+     <button onclick="showPage('notifications',this)">
+      🔔 الإشعارات
+     </button>
+
+     <button onclick="showPage('profile',this)">
+      👤 ملفي الشخصي
+     </button>
+
+     <button onclick="toggleDark()">
+      🌙 الوضع الليلي
+     </button>
+
+     <button onclick="logout()">
+      🚪 تسجيل الخروج
+     </button>
+
+    </div>
+
+   </div>
+
+  </aside>
+
+  <!-- ================= CENTER ================= -->
+
+  <main class="center">
+
+   <!-- HOME -->
+
+   <section id="homePage">
+
+    <div class="composer">
+
+     <div class="composer-top">
+
+      <div class="composer-avatar" id="composerAvatar">
+       M
+      </div>
+
+      <div>
+       <div class="composer-title">
+        إنشاء منشور
+       </div>
+
+       <div class="composer-sub">
+        شارك أفكارك مع مجتمع M-Social
+       </div>
+      </div>
+
+     </div>
+
+     <textarea
+      id="postContent"
+      maxlength="5000"
+      placeholder="بماذا تفكر اليوم؟ 💭"
+     ></textarea>
+
+     <div class="composer-bottom">
+
+      <div class="media-placeholder">
+       📷 الصور والفيديو قريباً
+      </div>
+
+      <button
+       class="publish"
+       onclick="createPost()"
+      >
+       نشر 🚀
+      </button>
+
+     </div>
+
+     <div id="postMessage"></div>
+
+    </div>
+
+    <div id="postsList">
+     <div class="loading">
+      جاري تحميل المنشورات...
+     </div>
+    </div>
+
+   </section>
+
+   <!-- SEARCH -->
+
+   <section id="searchPage" class="hidden">
+
+    <div class="search-box">
+
+     <div class="section-title">
+      <h2>🔎 استكشاف المستخدمين</h2>
+     </div>
+
+     <input
+      id="searchInput"
+      class="input"
+      placeholder="ابحث باسم المستخدم..."
+      oninput="searchUsers()"
+     >
+
+     <div id="searchResults"></div>
+
+    </div>
+
+   </section>
+
+   <!-- NOTIFICATIONS -->
+
+   <section id="notificationsPage" class="hidden">
+
+    <div class="search-box">
+
+     <div class="section-title">
+      <h2>🔔 الإشعارات</h2>
+     </div>
+
+     <div id="notificationsList">
+      <div class="loading">
+       جاري التحميل...
+      </div>
+     </div>
+
+    </div>
+
+   </section>
+
+   <!-- PROFILE -->
+
+   <section id="profilePage" class="hidden">
+
+    <div class="profile-page-card">
+
+     <div class="profile-large-cover"></div>
+
+     <div class="profile-large-body">
+
+      <div class="large-avatar" id="profileAvatar">
+       M
+      </div>
+
+      <div class="profile-name" id="profilePageName">
+       مستخدم
+      </div>
+
+      <div class="profile-handle" id="profilePageEmail"></div>
+
+      <div class="profile-bio">
+       أهلاً بك في ملفك الشخصي على M-Social.
+      </div>
+
+      <div class="stats" id="profileStats"></div>
+
+      <div class="profile-actions">
+
+       <button
+        class="btn btn-secondary"
+        onclick="alert('تعديل الملف الشخصي سنضيفه في المرحلة التالية')"
+       >
+        ✏️ تعديل الملف
+       </button>
+
+      </div>
+
+     </div>
+
+    </div>
+
+    <div class="search-box">
+
+     <div class="section-title">
+      <h2>📋 منشوراتي</h2>
+     </div>
+
+     <div id="myPosts"></div>
+
+    </div>
+
+   </section>
+
+  </main>
+
+  <!-- ================= RIGHT ================= -->
+
+  <aside class="right-side">
+
+   <div class="side-card">
+
+    <div class="side-title">
+     ✨ M-Social
+    </div>
+
+    <div style="color:var(--muted);line-height:1.8;font-size:13px">
+     منصتك الاجتماعية الجديدة.
+     ابحث عن الأشخاص، تابعهم وشارك أفكارك.
+    </div>
+
+   </div>
+
+   <div class="side-card">
+
+    <div class="side-title">
+     🚀 قريباً
+    </div>
+
+    <div style="color:var(--muted);line-height:2;font-size:13px">
+     📸 رفع الصور<br>
+     🎥 رفع الفيديو<br>
+     📖 Stories<br>
+     🎬 Reels<br>
+     #️⃣ Hashtags
+    </div>
+
+   </div>
+
+  </aside>
+
+ </div>
+
+</div>
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<div id="bottomNav" class="bottom-nav hidden">
+
+ <div class="bottom-inner">
+
+  <button
+   class="active"
+   onclick="showPage('home',this)"
+  >
+   <span>🏠</span>
+   الرئيسية
+  </button>
+
+  <button onclick="showPage('search',this)">
+   <span>🔎</span>
+   بحث
+  </button>
+
+  <button onclick="showMessages()">
+   <span>💬</span>
+   رسائل
+  </button>
+
+  <button onclick="showPage('notifications',this)">
+   <span>🔔</span>
+   إشعارات
+  </button>
+
+  <button onclick="showPage('profile',this)">
+   <span>👤</span>
+   حسابي
+  </button>
+
+ </div>
+
+</div>
+
+<!-- ================= MESSAGES ================= -->
+
+<div id="messagesModal" class="modal hidden">
+
+ <div class="modal-box">
+
+  <div class="modal-head">
+
+   <h2>💬 الرسائل</h2>
+
+   <button
+    class="close"
+    onclick="closeModal('messagesModal')"
+   >
+    ×
+   </button>
+
+  </div>
+
+  <input
+   id="messageUserSearch"
+   class="input"
+   placeholder="ابحث عن مستخدم..."
+   oninput="searchMessageUsers()"
+  >
+
+  <div id="messageUsers"></div>
+
+  <div id="chatArea" class="hidden">
+
+   <h3 id="chatTitle"></h3>
+
+   <div id="chatMessages" class="chat"></div>
+
+   <div class="chat-send">
+
+    <input
+     id="messageInput"
+     class="input"
+     placeholder="اكتب رسالتك..."
+     onkeydown="if(event.key==='Enter')sendMessage()"
+    >
+
+    <button onclick="sendMessage()">
+     إرسال
+    </button>
+
+   </div>
+
+  </div>
+
+ </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+"https://ycjqetdvjvpzlessmkcf.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_GdHgqXGs8lY7JNWebaXjqA_YUdhTMs5";
+
+const supabaseClient =
+window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let currentUser=null;
+let currentChatUser=null;
+let searchTimer=null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id){
+ return document.getElementById(id);
+}
+
+
+function message(id,text,type){
+
+ $(id).innerHTML=
+ `<div class="message ${type}">${escapeHtml(text)}</div>`;
+
+}
+
+
+function toast(text){
+
+ const t=$("toast");
+
+ t.textContent=text;
+
+ t.classList.add("show");
+
+ setTimeout(()=>{
+  t.classList.remove("show");
+ },2200);
+
+}
+
+
+function userInitial(name){
+
+ if(!name)return"M";
+
+ return name
+  .trim()
+  .charAt(0)
+  .toUpperCase();
+
+}
+
+
+function formatDate(date){
+
+ return new Date(date)
+  .toLocaleString("ar-EG",{
+   dateStyle:"short",
+   timeStyle:"short"
+  });
+
+}
+
+
+function escapeHtml(value){
+
+ return String(value||"")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+async function register(){
+
+ const email=$("email").value.trim();
+ const password=$("password").value;
+
+ if(!email||!password){
+
+  message(
+   "authMessage",
+   "اكتب البريد وكلمة المرور",
+   "error"
+  );
+
+  return;
+ }
+
+ if(password.length<6){
+
+  message(
+   "authMessage",
+   "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+   "error"
+  );
+
+  return;
+ }
+
+ const {data,error}=
+  await supabaseClient.auth.signUp({
+   email,
+   password
+  });
+
+ if(error){
+
+  message(
+   "authMessage",
+   error.message,
+   "error"
+  );
+
+  return;
+ }
+
+ if(data.session){
+
+  currentUser=data.user;
+
+  await createProfile();
+
+  showApp();
+
+ }else{
+
+  message(
+   "authMessage",
+   "تم إنشاء الحساب. يمكنك تسجيل الدخول الآن ✅",
+   "success"
+  );
+
+ }
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function login(){
+
+ const email=$("email").value.trim();
+ const password=$("password").value;
+
+ if(!email||!password){
+
+  message(
+   "authMessage",
+   "اكتب البريد وكلمة المرور",
+   "error"
+  );
+
+  return;
+ }
+
+ const {data,error}=
+  await supabaseClient.auth.signInWithPassword({
+   email,
+   password
+  });
+
+ if(error){
+
+  message(
+   "authMessage",
+   error.message,
+   "error"
+  );
+
+  return;
+ }
+
+ currentUser=data.user;
+
+ await createProfile();
+
+ showApp();
+
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+async function createProfile(){
+
+ if(!currentUser)return;
+
+ const username=
+  currentUser.email
+   .split("@")[0]
+   .replace(/[^a-zA-Z0-9_]/g,"")
+   .slice(0,30)||"user";
+
+ const {error}=
+  await supabaseClient
+   .from("profiles")
+   .upsert({
+    id:currentUser.id,
+    username:username
+   });
+
+ if(error)
+  console.log(error);
+
+}
+
+
+async function getMyProfile(){
+
+ const {data}=
+  await supabaseClient
+   .from("profiles")
+   .select("*")
+   .eq("id",currentUser.id)
+   .maybeSingle();
+
+ if(!data)return;
+
+ const name=
+  data.display_name||
+  data.username||
+  currentUser.email.split("@")[0];
+
+ $("profileName").textContent=name;
+ $("profilePageName").textContent=name;
+ $("profileEmail").textContent="@"+(data.username||"user");
+ $("profilePageEmail").textContent=currentUser.email;
+
+ const initial=userInitial(name);
+
+ $("mainAvatar").textContent=initial;
+ $("profileAvatar").textContent=initial;
+ $("composerAvatar").textContent=initial;
+ $("headerAvatar").textContent=initial;
+
+}
+
+
+/* =========================================================
+   SHOW APP
+========================================================= */
+
+async function showApp(){
+
+ $("authSection").classList.add("hidden");
+ $("appSection").classList.remove("hidden");
+ $("bottomNav").classList.remove("hidden");
+
+ await getMyProfile();
+ await loadPosts();
+ await loadProfileStats();
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout(){
+
+ await supabaseClient.auth.signOut();
+
+ currentUser=null;
+
+ $("appSection").classList.add("hidden");
+ $("authSection").classList.remove("hidden");
+ $("bottomNav").classList.add("hidden");
+
+ $("email").value="";
+ $("password").value="";
+
+ toast("تم تسجيل الخروج 👋");
+
+}
+
+
+/* =========================================================
+   CREATE POST
+========================================================= */
+
+async function createPost(){
+
+ const content=
+  $("postContent").value.trim();
+
+ if(!content){
+
+  message(
+   "postMessage",
+   "اكتب شيئاً قبل النشر",
+   "error"
+  );
+
+  return;
+ }
+
+ const {error}=
+  await supabaseClient
+   .from("posts")
+   .insert({
+    user_id:currentUser.id,
+    content:content
+   });
+
+ if(error){
+
+  message(
+   "postMessage",
+   error.message,
+   "error"
+  );
+
+  return;
+ }
+
+ $("postContent").value="";
+
+ message(
+  "postMessage",
+  "تم نشر المنشور بنجاح 🚀",
+  "success"
+ );
+
+ toast("تم النشر 🚀");
+
+ await loadPosts();
+ await loadProfileStats();
+
+}
+
+
+/* =========================================================
+   LOAD POSTS
+========================================================= */
+
+async function loadPosts(){
+
+ const list=$("postsList");
+
+ list.innerHTML=
+  '<div class="loading">جاري تحميل المنشورات...</div>';
+
+ const {data:posts,error}=
+  await supabaseClient
+   .from("posts")
+   .select("*")
+   .order("created_at",{ascending:false});
+
+ if(error){
+
+  list.innerHTML=
+   `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+  return;
+ }
+
+ if(!posts||posts.length===0){
+
+  list.innerHTML=
+   '<div class="empty">لا توجد منشورات بعد.<br>كن أول من ينشر شيئاً 🚀</div>';
+
+  return;
+ }
+
+ const {data:likes}=
+  await supabaseClient
+   .from("post_likes")
+   .select("post_id,user_id");
+
+ const counts={};
+ const mine=new Set();
+
+ (likes||[]).forEach(l=>{
+
+  counts[l.post_id]=
+   (counts[l.post_id]||0)+1;
+
+  if(l.user_id===currentUser.id)
+   mine.add(l.post_id);
+
+ });
+
+ list.innerHTML="";
+
+ for(const post of posts){
+
+  list.appendChild(
+   await buildPost(
+    post,
+    counts[post.id]||0,
+    mine.has(post.id)
+   )
+  );
+
+ }
+
+}
+
+
+/* =========================================================
+   BUILD POST
+========================================================= */
+
+async function buildPost(
+ post,
+ likeCount,
+ liked
+){
+
+ const div=document.createElement("article");
+
+ div.className="post";
+
+ const {data:profile}=
+  await supabaseClient
+   .from("profiles")
+   .select("username,display_name")
+   .eq("id",post.user_id)
+   .maybeSingle();
+
+ const displayName=
+  profile?.display_name||
+  profile?.username||
+  "مستخدم";
+
+ const username=
+  profile?.username||
+  "user";
+
+ div.innerHTML=`
+
+  <div class="post-head">
+
+   <div class="post-user-box">
+
+    <div class="post-avatar">
+     ${escapeHtml(userInitial(displayName))}
+    </div>
+
+    <div>
+
+     <div class="post-name">
+      ${escapeHtml(displayName)}
+     </div>
+
+     <div class="post-handle">
+      @${escapeHtml(username)}
+     </div>
+
+    </div>
+
+   </div>
+
+   <div class="post-date">
+    ${formatDate(post.created_at)}
+   </div>
+
+  </div>
+
+  <div class="post-content">
+   ${escapeHtml(post.content)}
+  </div>
+
+  <div class="post-actions">
+
+   <button
+    class="action ${liked?"liked":""}"
+    onclick="toggleLike(${post.id})"
+   >
+    ${liked?"❤️":"🤍"} ${likeCount}
+   </button>
+
+   <button
+    class="action"
+    onclick="toggleComments(${post.id})"
+   >
+    💬 تعليق
+   </button>
+
+   <button
+    class="action ${currentUser.id===post.user_id?"delete":""}"
+    onclick="${
+     currentUser.id===post.user_id
+     ?`deletePost(${post.id})`
+     :`sharePost(${post.id})`
+    }"
+   >
+    ${
+     currentUser.id===post.user_id
+     ?"🗑️ حذف"
+     :"↗️ مشاركة"
+    }
+   </button>
+
+  </div>
+
+  <div
+   id="comments-${post.id}"
+   class="comment-box hidden"
+  >
+
+   <div id="comment-list-${post.id}">
+    <div class="loading">تحميل التعليقات...</div>
+   </div>
+
+   <div class="comment-input">
+
+    <input
+     id="comment-input-${post.id}"
+     class="input"
+     placeholder="اكتب تعليقاً..."
+    >
+
+    <button onclick="addComment(${post.id})">
+     إرسال
+    </button>
+
+   </div>
+
+  </div>
+
+ `;
+
+ return div;
+
+}
+
+
+/* =========================================================
+   SHARE
+========================================================= */
+
+async function sharePost(postId){
+
+ const url=location.href+"#post-"+postId;
+
+ try{
+
+  if(navigator.share){
+
+   await navigator.share({
+    title:"M-Social",
+    text:"شاهد هذا المنشور على M-Social",
+    url:url
+   });
+
+  }else{
+
+   await navigator.clipboard.writeText(url);
+
+   toast("تم نسخ رابط المنشور 🔗");
+
+  }
+
+ }catch(e){}
+
+}
+
+
+/* =========================================================
+   LIKE
+========================================================= */
+
+async function toggleLike(postId){
+
+ const {data:existing}=
+  await supabaseClient
+   .from("post_likes")
+   .select("id")
+   .eq("post_id",postId)
+   .eq("user_id",currentUser.id)
+   .maybeSingle();
+
+ if(existing){
+
+  await supabaseClient
+   .from("post_likes")
+   .delete()
+   .eq("id",existing.id);
+
+ }else{
+
+  await supabaseClient
+   .from("post_likes")
+   .insert({
+    post_id:postId,
+    user_id:currentUser.id
+   });
+
+ }
+
+ await loadPosts();
+
+}
+
+
+/* =========================================================
+   COMMENTS
+========================================================= */
+
+async function toggleComments(postId){
+
+ const box=$(`comments-${postId}`);
+
+ box.classList.toggle("hidden");
+
+ if(!box.classList.contains("hidden"))
+  await loadComments(postId);
+
+}
+
+
+async function loadComments(postId){
+
+ const list=
+  $(`comment-list-${postId}`);
+
+ const {data,error}=
+  await supabaseClient
+   .from("comments")
+   .select("*")
+   .eq("post_id",postId)
+   .order("created_at",{ascending:true});
+
+ if(error){
+
+  list.innerHTML=
+   `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+  return;
+ }
+
+ if(!data||data.length===0){
+
+  list.innerHTML=
+   '<div class="empty">لا توجد تعليقات بعد 💬</div>';
+
+  return;
+ }
+
+ list.innerHTML="";
+
+ for(const comment of data){
+
+  const {data:profile}=
+   await supabaseClient
+    .from("profiles")
+    .select("username,display_name")
+    .eq("id",comment.user_id)
+    .maybeSingle();
+
+  const username=
+   profile?.display_name||
+   profile?.username||
+   "مستخدم";
+
+  const el=document.createElement("div");
+
+  el.className="comment";
+
+  el.innerHTML=`
+
+   <div class="comment-user">
+    ${escapeHtml(username)}
+   </div>
+
+   <div class="comment-text">
+    ${escapeHtml(comment.content)}
+   </div>
+
+  `;
+
+  if(comment.user_id===currentUser.id){
+
+   const del=document.createElement("button");
+
+   del.className="delete";
+   del.style.marginTop="7px";
+   del.style.background="transparent";
+   del.textContent="حذف";
+
+   del.onclick=async()=>{
+
+    await supabaseClient
+     .from("comments")
+     .delete()
+     .eq("id",comment.id);
+
+    await loadComments(postId);
+
+   };
+
+   el.appendChild(del);
+
+  }
+
+  list.appendChild(el);
+
+ }
+
+}
+
+
+async function addComment(postId){
+
+ const input=
+  $(`comment-input-${postId}`);
+
+ const content=
+  input.value.trim();
+
+ if(!content)return;
+
+ const {error}=
+  await supabaseClient
+   .from("comments")
+   .insert({
+    post_id:postId,
+    user_id:currentUser.id,
+    content:content
+   });
+
+ if(error){
+
+  toast(error.message);
+  return;
+
+ }
+
+ input.value="";
+
+ toast("تم إضافة التعليق 💬");
+
+ await loadComments(postId);
+
+}
+
+
+/* =========================================================
+   DELETE POST
+========================================================= */
+
+async function deletePost(postId){
+
+ if(!confirm("هل تريد حذف هذا المنشور؟"))
+  return;
+
+ const {error}=
+  await supabaseClient
+   .from("posts")
+   .delete()
+   .eq("id",postId)
+   .eq("user_id",currentUser.id);
+
+ if(error){
+
+  toast(error.message);
+  return;
+
+ }
+
+ toast("تم حذف المنشور");
+
+ await loadPosts();
+ await loadProfileStats();
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+async function searchUsers(){
+
+ clearTimeout(searchTimer);
+
+ searchTimer=setTimeout(async()=>{
+
+  const q=
+   $("searchInput").value.trim();
+
+  const results=
+   $("searchResults");
+
+  if(!q){
+
+   results.innerHTML=
+    '<div class="empty">ابدأ بكتابة اسم المستخدم 🔎</div>';
+
+   return;
+
+  }
+
+  const {data,error}=
+   await supabaseClient
+    .from("profiles")
+    .select("id,username,display_name")
+    .ilike("username","%"+q+"%")
+    .limit(20);
+
+  if(error){
+
+   results.innerHTML=
+    `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+   return;
+
+  }
+
+  results.innerHTML="";
+
+  if(!data||data.length===0){
+
+   results.innerHTML=
+    '<div class="empty">لا يوجد مستخدمون بهذا الاسم.</div>';
+
+   return;
+
+  }
+
+  for(const user of data){
+
+   if(user.id===currentUser.id)
+    continue;
+
+   results.appendChild(
+    await userResult(user)
+   );
+
+  }
+
+ },300);
+
+}
+
+
+async function userResult(user){
+
+ const div=document.createElement("div");
+
+ div.className="search-result";
+
+ const name=
+  user.display_name||
+  user.username||
+  "مستخدم";
+
+ const {data:follow}=
+  await supabaseClient
+   .from("follows")
+   .select("id")
+   .eq("follower_id",currentUser.id)
+   .eq("following_id",user.id)
+   .maybeSingle();
+
+ div.innerHTML=`
+
+  <div class="user-info">
+
+   <div class="small-avatar">
+    ${escapeHtml(userInitial(name))}
+   </div>
+
+   <div class="user-text">
+
+    <b>${escapeHtml(name)}</b>
+
+    <small>
+     @${escapeHtml(user.username||"user")}
+    </small>
+
+   </div>
+
+  </div>
+
+  <button
+   class="follow-btn ${follow?"following":""}"
+   onclick="toggleFollow('${user.id}')"
+  >
+   ${follow?"✓ متابَع":"＋ متابعة"}
+  </button>
+
+ `;
+
+ return div;
+
+}
+
+
+/* =========================================================
+   FOLLOW
+========================================================= */
+
+async function toggleFollow(userId){
+
+ const {data:existing}=
+  await supabaseClient
+   .from("follows")
+   .select("id")
+   .eq("follower_id",currentUser.id)
+   .eq("following_id",userId)
+   .maybeSingle();
+
+ if(existing){
+
+  await supabaseClient
+   .from("follows")
+   .delete()
+   .eq("id",existing.id);
+
+  toast("تم إلغاء المتابعة");
+
+ }else{
+
+  await supabaseClient
+   .from("follows")
+   .insert({
+    follower_id:currentUser.id,
+    following_id:userId
+   });
+
+  toast("تمت المتابعة ✓");
+
+ }
+
+ await searchUsers();
+ await loadProfileStats();
+
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+async function loadNotifications(){
+
+ const list=
+  $("notificationsList");
+
+ const {data,error}=
+  await supabaseClient
+   .from("notifications")
+   .select("*")
+   .eq("user_id",currentUser.id)
+   .order("created_at",{ascending:false})
+   .limit(50);
+
+ if(error){
+
+  list.innerHTML=
+   `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+  return;
+
+ }
+
+ if(!data||data.length===0){
+
+  list.innerHTML=
+   '<div class="empty">لا توجد إشعارات حالياً 🔔</div>';
+
+  return;
+
+ }
+
+ list.innerHTML="";
+
+ data.forEach(n=>{
+
+  const div=document.createElement("div");
+
+  div.className="notification";
+
+  let icon="🔔";
+  let text="إشعار جديد";
+
+  if(n.type==="like"){
+   icon="❤️";
+   text="شخص أعجب بمنشورك";
+  }
+
+  if(n.type==="comment"){
+   icon="💬";
+   text="شخص علّق على منشورك";
+  }
+
+  if(n.type==="follow"){
+   icon="👥";
+   text="شخص بدأ بمتابعتك";
+  }
+
+  div.innerHTML=`
+
+   <div class="notification-icon">
+    ${icon}
+   </div>
+
+   <div>
+    <b>${text}</b>
+    <br>
+    <small>${formatDate(n.created_at)}</small>
+   </div>
+
+  `;
+
+  list.appendChild(div);
+
+ });
+
+}
+
+
+/* =========================================================
+   PROFILE STATS
+========================================================= */
+
+async function loadProfileStats(){
+
+ const posts=
+  await supabaseClient
+   .from("posts")
+   .select("id",{count:"exact",head:true})
+   .eq("user_id",currentUser.id);
+
+ const followers=
+  await supabaseClient
+   .from("follows")
+   .select("id",{count:"exact",head:true})
+   .eq("following_id",currentUser.id);
+
+ const following=
+  await supabaseClient
+   .from("follows")
+   .select("id",{count:"exact",head:true})
+   .eq("follower_id",currentUser.id);
+
+ const p=posts.count||0;
+ const f=followers.count||0;
+ const g=following.count||0;
+
+ $("sidePosts").textContent=p;
+ $("sideFollowers").textContent=f;
+ $("sideFollowing").textContent=g;
+
+ $("profileStats").innerHTML=`
+
+  <div>
+   <b>${p}</b>
+   <span>منشورات</span>
+  </div>
+
+  <div>
+   <b>${f}</b>
+   <span>متابعون</span>
+  </div>
+
+  <div>
+   <b>${g}</b>
+   <span>أتابع</span>
+  </div>
+
+ `;
+
+}
+
+
+/* =========================================================
+   MY POSTS
+========================================================= */
+
+async function loadMyPosts(){
+
+ const list=$("myPosts");
+
+ const {data,error}=
+  await supabaseClient
+   .from("posts")
+   .select("*")
+   .eq("user_id",currentUser.id)
+   .order("created_at",{ascending:false});
+
+ if(error){
+
+  list.innerHTML=
+   `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+  return;
+
+ }
+
+ if(!data||data.length===0){
+
+  list.innerHTML=
+   '<div class="empty">لم تنشر أي منشور بعد 📝</div>';
+
+  return;
+
+ }
+
+ list.innerHTML="";
+
+ data.forEach(post=>{
+
+  const div=document.createElement("div");
+
+  div.className="comment";
+
+  div.innerHTML=`
+
+   <div style="line-height:1.7">
+    ${escapeHtml(post.content)}
+   </div>
+
+   <small style="color:var(--muted)">
+    ${formatDate(post.created_at)}
+   </small>
+
+  `;
+
+  list.appendChild(div);
+
+ });
+
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+function showMessages(){
+
+ $("messagesModal")
+  .classList.remove("hidden");
+
+ $("chatArea")
+  .classList.add("hidden");
+
+ $("messageUserSearch").value="";
+
+ $("messageUsers").innerHTML=
+  '<div class="empty">ابحث عن مستخدم لبدء محادثة 💬</div>';
+
+}
+
+
+function closeModal(id){
+
+ $(id).classList.add("hidden");
+
+}
+
+
+async function searchMessageUsers(){
+
+ const q=
+  $("messageUserSearch").value.trim();
+
+ if(!q){
+
+  $("messageUsers").innerHTML="";
+  return;
+
+ }
+
+ const {data,error}=
+  await supabaseClient
+   .from("profiles")
+   .select("id,username,display_name")
+   .ilike("username","%"+q+"%")
+   .limit(15);
+
+ if(error){
+
+  $("messageUsers").innerHTML=
+   `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+  return;
+
+ }
+
+ $("messageUsers").innerHTML="";
+
+ for(const user of data){
+
+  if(user.id===currentUser.id)
+   continue;
+
+  const name=
+   user.display_name||
+   user.username||
+   "مستخدم";
+
+  const div=document.createElement("div");
+
+  div.className="search-result";
+
+  div.innerHTML=`
+
+   <div class="user-info">
+
+    <div class="small-avatar">
+     ${escapeHtml(userInitial(name))}
+    </div>
+
+    <div class="user-text">
+     <b>${escapeHtml(name)}</b>
+     <small>@${escapeHtml(user.username||"user")}</small>
+    </div>
+
+   </div>
+
+   <button class="follow-btn"
+    onclick="openChat('${user.id}')">
+    💬 محادثة
+   </button>
+
+  `;
+
+  $("messageUsers").appendChild(div);
+
+ }
+
+}
+
+
+async function openChat(userId){
+
+ currentChatUser=userId;
+
+ const {data:user}=
+  await supabaseClient
+   .from("profiles")
+   .select("username,display_name")
+   .eq("id",userId)
+   .maybeSingle();
+
+ const name=
+  user?.display_name||
+  user?.username||
+  "مستخدم";
+
+ $("chatArea")
+  .classList.remove("hidden");
+
+ $("chatTitle").textContent=
+  "💬 "+name;
+
+ await loadMessages();
+
+}
+
+
+async function loadMessages(){
+
+ const {data,error}=
+  await supabaseClient
+   .from("messages")
+   .select("*")
+   .or(
+    `and(sender_id.eq.${currentUser.id},receiver_id.eq.${currentChatUser}),and(sender_id.eq.${currentChatUser},receiver_id.eq.${currentUser.id})`
+   )
+   .order("created_at",{ascending:true});
+
+ if(error){
+
+  $("chatMessages").innerHTML=
+   `<div class="empty">${escapeHtml(error.message)}</div>`;
+
+  return;
+
+ }
+
+ $("chatMessages").innerHTML="";
+
+ if(!data||data.length===0){
+
+  $("chatMessages").innerHTML=
+   '<div class="empty">ابدأ أول رسالة 👋</div>';
+
+  return;
+
+ }
+
+ data.forEach(msg=>{
+
+  const div=document.createElement("div");
+
+  div.className=
+   "bubble "+
+   (
+    msg.sender_id===currentUser.id
+    ?"mine"
+    :"theirs"
+   );
+
+  div.textContent=msg.content;
+
+  $("chatMessages").appendChild(div);
+
+ });
+
+ const chat=$("chatMessages");
+
+ chat.scrollTop=chat.scrollHeight;
+
+}
+
+
+async function sendMessage(){
+
+ const input=$("messageInput");
+
+ const content=input.value.trim();
+
+ if(!content||!currentChatUser)
+  return;
+
+ const {error}=
+  await supabaseClient
+   .from("messages")
+   .insert({
+    sender_id:currentUser.id,
+    receiver_id:currentChatUser,
+    content:content
+   });
+
+ if(error){
+
+  toast(error.message);
+  return;
+
+ }
+
+ input.value="";
+
+ await loadMessages();
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function hidePages(){
+
+ $("homePage").classList.add("hidden");
+ $("searchPage").classList.add("hidden");
+ $("notificationsPage").classList.add("hidden");
+ $("profilePage").classList.add("hidden");
+
+}
+
+
+async function showPage(page,button){
+
+ hidePages();
+
+ document
+  .querySelectorAll(
+   ".menu button,.bottom-nav button"
+  )
+  .forEach(b=>b.classList.remove("active"));
+
+ if(button)
+  button.classList.add("active");
+
+ if(page==="home"){
+
+  $("homePage").classList.remove("hidden");
+
+  await loadPosts();
+
+ }
+
+ if(page==="search"){
+
+  $("searchPage").classList.remove("hidden");
+
+ }
+
+ if(page==="notifications"){
+
+  $("notificationsPage")
+   .classList.remove("hidden");
+
+  await loadNotifications();
+
+ }
+
+ if(page==="profile"){
+
+  $("profilePage")
+   .classList.remove("hidden");
+
+  await loadProfileStats();
+
+  await loadMyPosts();
+
+ }
+
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+function updateDarkIcon(){
+
+ $("darkBtn").textContent=
+  document.body.classList.contains("dark")
+  ?"☀️"
+  :"🌙";
+
+}
+
+
+function toggleDark(){
+
+ document.body.classList.toggle("dark");
+
+ localStorage.setItem(
+  "msocial_dark",
+  document.body.classList.contains("dark")
+ );
+
+ updateDarkIcon();
+
+}
+
+
+if(localStorage.getItem("msocial_dark")==="true"){
+
+ document.body.classList.add("dark");
+
+}
+
+updateDarkIcon();
+
+
+/* =========================================================
+   SESSION
+========================================================= */
+
+async function checkSession(){
+
+ const {data}=
+  await supabaseClient.auth.getSession();
+
+ if(data.session){
+
+  currentUser=data.session.user;
+
+  await createProfile();
+
+  await showApp();
+
+ }
+
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+ async(event,session)=>{
+
+  if(session){
+
+   currentUser=session.user;
+
+   await createProfile();
+
+   await showApp();
+
+  }
+
+ }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+checkSession();
+
+</script>
+
+</body>
+</html>
